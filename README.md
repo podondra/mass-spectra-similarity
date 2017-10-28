@@ -18,9 +18,10 @@ similarity.
 
 ## Links
 
-[An Introduction to Bioinformatics Algorithms](
+- [An Introduction to Bioinformatics Algorithms](
     http://bix.ucsd.edu/bioalgorithms/
     )
-[Protein ID With MS/MS Data](
+
+- [Protein ID With MS/MS Data](
     http://www.ionsource.com/tutorial/protID/spectralmatching_mascot.htm
     )
