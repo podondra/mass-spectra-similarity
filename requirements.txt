@@ -1,0 +1,11 @@
+click==6.7
+Flask==0.12.2
+itsdangerous==0.24
+Jinja2==2.10
+MarkupSafe==1.0
+-e git+git@github.com:podondra/mass-spectra-similarity.git@2cf353b397169156195f62ec54da244ad3136d21#egg=mss
+numpy==1.13.3
+pkg-resources==0.0.0
+pyteomics==3.4.2
+scipy==1.0.0
+Werkzeug==0.12.2
