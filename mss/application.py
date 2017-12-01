@@ -1,7 +1,6 @@
 import os
-from flask import Flask, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
-import random  # TODO delete
 from pyteomics import mgf
 from .similarity import detect_similar
 
@@ -38,15 +37,7 @@ def upload_file():
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return redirect(url_for('similarity_view', filename=filename))
 
-    return '''
-    <!doctype html>
-    <title>upload mgf file</title>
-    <h1>upload mgf file</h1>
-    <form method="post" enctype="multipart/form-data">
-      <p><input type="file" name="file">
-         <input type="submit" value="upload">
-    </form>
-    '''
+    return render_template('upload_file.html')
 
 
 # TODO move to other module. import problem with app object
@@ -60,9 +51,6 @@ def read_mgf(filename):
 @app.route('/similarity/<filename>')
 def similarity_view(filename):
     spectra = read_mgf(filename)
-    # TODO for all spectra in the file
-    # for spectrum in spectra:
-    spectrum = random.choice(spectra)
-    similar_spectra = detect_similar(spectrum)
+    similarities = detect_similar(spectra)
     # TODO view
-    return str(similar_spectra)
+    return render_template('similarities.html', similarities=similarities)

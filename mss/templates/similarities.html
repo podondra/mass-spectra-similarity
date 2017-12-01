@@ -1,0 +1,13 @@
+<!doctype html>
+<title>similarities</title>
+<h1>found similarities</h1>
+<p>{{ similarities|length }} results</p>
+
+{% for similarity in similarities %}
+<h2>spectrum {{ loop.index }}</h2>
+<p>{{ similarity['spectrum']['m/z array'] }}</p>
+<p>{{ similarity['spectrum']['intensity array'] }}</p>
+    {% for peptide in similarity['peptides'] %}
+    <p>{{ peptide }}: {{ similarity['mz'][loop.index0] }}</p>
+    {% endfor %}
+{% endfor %}
