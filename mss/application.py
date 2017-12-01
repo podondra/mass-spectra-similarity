@@ -1,7 +1,7 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
-import random # TODO delete
+import random  # TODO delete
 from pyteomics import mgf
 from .similarity import detect_similar
 
@@ -11,6 +11,7 @@ UPLOAD_FOLDER = os.path.join(os.sep, 'tmp')
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+# TODO create config
 app.config['SECRET_KEY'] = 'development key'
 
 
@@ -60,7 +61,7 @@ def read_mgf(filename):
 def similarity_view(filename):
     spectra = read_mgf(filename)
     # TODO for all spectra in the file
-    #for spectrum in spectra:
+    # for spectrum in spectra:
     spectrum = random.choice(spectra)
     similar_spectra = detect_similar(spectrum)
     # TODO view
