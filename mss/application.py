@@ -1,4 +1,5 @@
 import os
+import time
 from flask import Flask, render_template, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 from pyteomics import mgf
@@ -50,7 +51,10 @@ def read_mgf(filename):
 
 @app.route('/similarity/<filename>')
 def similarity_view(filename):
+    start = time.time()
     spectra = read_mgf(filename)
     similarities = detect_similar(spectra)
+    end = time.time()
     # TODO view
-    return render_template('similarities.html', similarities=similarities)
+    return render_template('similarities.html', similarities=similarities,
+                           time=(end - start))

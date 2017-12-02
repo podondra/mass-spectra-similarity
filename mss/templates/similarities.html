@@ -2,12 +2,15 @@
 <title>similarities</title>
 <h1>found similarities</h1>
 <p>{{ similarities|length }} results</p>
+<p>time {{ time }} (second)</p>
 
 {% for similarity in similarities %}
-<h2>spectrum {{ loop.index }}</h2>
-<p>{{ similarity['spectrum']['m/z array'] }}</p>
-<p>{{ similarity['spectrum']['intensity array'] }}</p>
+<h2>mass spectrum {{ loop.index }}</h2>
+<p>m/z array: {{ similarity['spectrum']['m/z array'] }}</p>
+<p>intensity array: {{ similarity['spectrum']['intensity array'] }}</p>
+<ol>
     {% for peptide in similarity['peptides'] %}
-    <p>{{ peptide }}: {{ similarity['mz'][loop.index0] }}</p>
+    <li>{{ peptide }}: {{ similarity['mz'][loop.index0] }}</li>
     {% endfor %}
+</ol>
 {% endfor %}
