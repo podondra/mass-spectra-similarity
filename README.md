@@ -25,3 +25,9 @@ similarity.
 - [Protein ID With MS/MS Data](
     http://www.ionsource.com/tutorial/protID/spectralmatching_mascot.htm
     )
+
+## FLASK APP
+
+To start the app:
+
+`$ FLASK_APP=mss FLASK_DEBUG=true flask run`
