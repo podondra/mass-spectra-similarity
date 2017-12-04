@@ -1,18 +1,22 @@
 import os
 import time
-from flask import Flask, render_template, request, redirect, url_for, flash
+from . import app
+from flask import render_template, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
-from pyteomics import mgf
 from .similarity import detect_similar
+from .spectra import read_mgf
 
 
-ALLOWED_EXTENSIONS = set(['mgf'])
+ALLOWED_EXTENSIONS = set(['mgf', 'fasta'])
 UPLOAD_FOLDER = os.path.join(os.sep, 'tmp')
 
-app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-# TODO create config
-app.config['SECRET_KEY'] = 'development key'
+app.config['SECRET_KEY'] = os.urandom(24)
+
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 
 def allowed_file(filename):
@@ -20,8 +24,8 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.route('/', methods=['GET', 'POST'])
-def upload_file():
+@app.route('/upload/', methods=['GET', 'POST'])
+def upload_mgf():
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
@@ -37,24 +41,16 @@ def upload_file():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return redirect(url_for('similarity_view', filename=filename))
-
-    return render_template('upload_file.html')
-
-
-# TODO move to other module. import problem with app object
-def read_mgf(filename):
-    path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    with mgf.read(path) as reader:
-        spectra = list(reader)
-    return spectra
+    else:
+        return render_template('upload.html')
 
 
 @app.route('/similarity/<filename>')
 def similarity_view(filename):
     start = time.time()
-    spectra = read_mgf(filename)
+    path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    spectra = read_mgf(path)
     similarities = detect_similar(spectra)
     end = time.time()
-    # TODO view
     return render_template('similarities.html', similarities=similarities,
                            time=(end - start))
