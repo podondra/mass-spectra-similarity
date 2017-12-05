@@ -13,6 +13,8 @@ def bin_spectra(spectra, bins):
     return mz_matrix
 
 
+# TODO experiment with bin sizes 0.1, 0.5, 1
+# TODO kNN query with user chosen k
 def detect_similar(spectra, bins=13000):
     mz_matrix = bin_spectra(spectra, bins)
     # get database

@@ -3,6 +3,9 @@ from pyteomics import fasta
 from .spectra import bin_spectrum, compute_mass_spectrum
 
 
+ALLOWED_AMINO_ACIDS = 'ARNDCFQEGHILKMPSTWYV'
+
+
 def generate_peptides(protein):
     peptides = set()
     peptide = ''
@@ -15,9 +18,11 @@ def generate_peptides(protein):
     return peptides
 
 
-# TODO implement database generation
 # TODO add view for db generation
 # TODO come up with right location of db
+# TODO represent as vector model see ref/lecture03.pdf
+# TODO ignore peptides which contains modifications in db generation
+#      sequence = ''.join([c for c in sequence if c in ALLOWED_AMINO_ACIDS])
 def generate_db(fasta_file, bins=13000):
     peptides = set()
     with fasta.read(fasta_file) as db:
@@ -40,7 +45,6 @@ def generate_db(fasta_file, bins=13000):
 
 def get_db(db_file):
     # TODO improve, e.g. memory maping
-    # TODO make sure that peptides are unique
     npz = numpy.load(db_file)
     # first array is peptides, second is mz values, third is binned intensities
     return npz['peptides'], npz['mzs'], npz['intensity_matrix']

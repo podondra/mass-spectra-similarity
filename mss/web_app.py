@@ -1,19 +1,30 @@
 import os
-import time
 from . import app
 from flask import render_template, request, redirect, url_for, flash
+from flask_pymongo import PyMongo
 from werkzeug.utils import secure_filename
 from .similarity import detect_similar
 from .spectra import read_mgf
 
 
+# TODO db generation view
+# TODO results view
+# TODO result view
+# TODO result's spectra visualization view
+
+
 ALLOWED_EXTENSIONS = set(['mgf', 'fasta'])
-UPLOAD_FOLDER = os.path.join(os.sep, 'tmp')
 
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 app.config['SECRET_KEY'] = os.urandom(24)
+app.config['MONGO_DBNAME'] = 'mss'
+app.config['MONGO_URI'] = 'mongodb://localhost:27017/mss'
 
 
+mongo = PyMongo(app)
+
+
+# TODO merge with upload_mgf
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -24,6 +35,8 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+# TODO allow to choose which ionts to compare b, y, a and all combination
+# TODO allow to choose which charge to compare 1, 2, 3, ...
 @app.route('/upload/', methods=['GET', 'POST'])
 def upload_mgf():
     if request.method == 'POST':
@@ -39,18 +52,16 @@ def upload_mgf():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('similarity_view', filename=filename))
+            mongo.save_file(filename, file)
+            return redirect(url_for('results'))
     else:
         return render_template('upload.html')
 
 
-@app.route('/similarity/<filename>')
-def similarity_view(filename):
-    start = time.time()
-    path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    spectra = read_mgf(path)
-    similarities = detect_similar(spectra)
-    end = time.time()
-    return render_template('similarities.html', similarities=similarities,
-                           time=(end - start))
+@app.route('/result/')
+def results():
+    files = mongo.db.fs.files.find()
+    spectra = read_mgf(next(files).read())
+    return str(spectra)
+    detect_similar(spectra)
+    return render_template('results.html')
