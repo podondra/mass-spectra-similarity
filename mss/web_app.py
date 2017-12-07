@@ -8,9 +8,6 @@ from .similarity import detect_similar
 from .spectra import read_mgf
 
 
-# TODO db generation view
-
-
 app.config['SECRET_KEY'] = os.urandom(24)
 app.config['MONGO_DBNAME'] = 'mss'
 app.config['MONGO_URI'] = 'mongodb://localhost:27017/mss'
@@ -74,3 +71,8 @@ def results(result_id=None):
 def spectrum(spectrum_id):
     spectrum = mongo.db.spectra.find_one({'_id': spectrum_id})
     return render_template('spectrum.html', spectrum=spectrum)
+
+
+@app.route('/db/')
+def db():
+    return render_template('db.html')
