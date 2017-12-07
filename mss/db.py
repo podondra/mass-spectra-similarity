@@ -10,7 +10,12 @@ def generate_peptides(protein):
     peptides = set()
     peptide = ''
     for i in range(len(protein) - 1):
-        peptide += protein[i]
+        amino_acid = protein[i]
+        # this ignores B amino acid in test fasta file which can be D or N
+        if amino_acid not in ALLOWED_AMINO_ACIDS:
+            peptide = ''
+            continue
+        peptide += amino_acid
         if (protein[i] == 'K' or protein[i] == 'R') and protein[i + 1] != 'P':
             if len(peptide) > 0:
                 peptides.add(peptide)
@@ -19,10 +24,8 @@ def generate_peptides(protein):
 
 
 # TODO add view for db generation
-# TODO come up with right location of db
+# TODO save db to mongodb
 # TODO represent as vector model see ref/lecture03.pdf
-# TODO ignore peptides which contains modifications in db generation
-#      sequence = ''.join([c for c in sequence if c in ALLOWED_AMINO_ACIDS])
 def generate_db(fasta_file, bins=13000):
     peptides = set()
     with fasta.read(fasta_file) as db:
@@ -44,7 +47,7 @@ def generate_db(fasta_file, bins=13000):
 
 
 def get_db(db_file):
-    # TODO improve, e.g. memory maping
+    # TODO load it from mongodb
     npz = numpy.load(db_file)
     # first array is peptides, second is mz values, third is binned intensities
     return npz['peptides'], npz['mzs'], npz['intensity_matrix']

@@ -3,4 +3,20 @@
 {% block content %}
 <h1>mss</h1>
 <p class="important">mass spectra similarity</p>
+<form method="post" enctype="multipart/form-data">
+    <p>
+        <input type="file" name="file">
+        <select name="iont" multiple>
+            {% for iont in 'bya' %}
+            <option value="{{ iont }}">{{ iont }}</option>
+            {% endfor %}
+        </select>
+        <select name="charge" multiple>
+            {% for charge in range(1, 4) %}
+            <option value="{{ charge }}">{{ charge }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="upload">
+    </p>
+</form>
 {% endblock %}

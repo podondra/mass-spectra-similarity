@@ -14,15 +14,14 @@ def bin_spectra(spectra, bins):
 
 
 # TODO experiment with bin sizes 0.1, 0.5, 1
-# TODO kNN query with user chosen k
-def detect_similar(spectra, bins=13000):
+def detect_similar(spectra, k, bins=13000):
     mz_matrix = bin_spectra(spectra, bins)
     # get database
     db_peptides, db_mz, db_binned = get_db('data/db.npz')
     # compute similarity matrix
     similarities = cosine_similarity(mz_matrix, db_binned)
     # choose top 5 for each spectrum
-    index = numpy.flip(numpy.argsort(similarities)[:, -5:], axis=-1)
+    index = numpy.flip(numpy.argsort(similarities)[:, -k:], axis=-1)
     top_peptides = db_peptides[index]
     top_mz = db_mz[index]
     return top_peptides, top_mz

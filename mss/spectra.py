@@ -14,10 +14,7 @@ def b_ionts(sequence):
     return [sequence[:i] for i in range(1, len(sequence))]
 
 
-# TODO for theoretical peptide precompute with charge 1, 2, 3, ...
 def compute_mass_spectrum(sequence, charge=1):
-    # TODO sometimes sequence contains '+' and other characters INGORE them
-    # TODO ignore peptides which contains modifications in db generation
     spectrum = numpy.zeros(len(sequence) - 1)
     for i, iont in enumerate(b_ionts(sequence)):
         spectrum[i] = mass.calculate_mass(sequence=iont, ion_type='b',

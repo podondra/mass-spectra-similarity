@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block title %}resutls{% endblock %}
+{% block content %}
+<h1>results</h1>
+<ol>
+    {% for result in results %}
+    <li><a href="{{ url_for('results', result_id=result._id) }}">
+        {{ result._id }}
+    </a></li>
+    {% endfor %}
+</ol>
+{% endblock %}

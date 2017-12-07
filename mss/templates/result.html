@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block title %}resutl{% endblock %}
+{% block content %}
+<h1>result {{ result._id }}</h1>
+<ol>
+    {% for spectrum_id in result.spectra %}
+    <li><a href="{{ url_for('spectrum', spectrum_id=spectrum_id) }}">
+        {{ spectrum_id }}
+    </a></li>
+    {% endfor %}
+</ol>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block title %}spectrum{% endblock %}
+{% block content %}
+<h1>spectrum {{ spectrum._id }}</h1>
+<ol>
+    <li>mz: {{ spectrum.mz }}</li>
+    <li>intensity: {{ spectrum.intensity }}</li>
+</ol>
+{% endblock %}
