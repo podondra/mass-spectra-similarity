@@ -26,8 +26,24 @@ similarity.
     http://www.ionsource.com/tutorial/protID/spectralmatching_mascot.htm
     )
 
-## FLASK APP
+## Flask App
+
+To install the application in *editable* mode:
+
+`$ pip install -e .`
 
 To start the app:
 
-`$ FLASK_APP=mss FLASK_DEBUG=true flask run`
+`$ export FLASK_APP=mss`
+`$ flask run`
+
+Debug mode:
+
+`$ export FLASK_DEBUG=1`
+`$ flask run`
+
+## MongoDB
+
+To start database (use `-d` to demonize it):
+
+`docker run -p 27017:27017 --name some-mongo mongo`
