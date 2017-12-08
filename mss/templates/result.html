@@ -1,12 +1,39 @@
 {% extends "layout.html" %}
-{% block title %}resutl{% endblock %}
+{% block title %}result{% endblock %}
+{% block head %}
+    {{ super() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vega/3.0.8/vega.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vega-lite/2.0.3/vega-lite.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vega-embed/3.0.0-rc7/vega-embed.js"></script>
+    <style media="screen">
+    /* add space between vega-embed links  */
+    .vega-actions a {margin-right: 5px;}
+    </style>
+{% endblock %}
 {% block content %}
 <h1>result {{ result._id }}</h1>
 <ol>
     {% for spectrum_id in result.spectra %}
-    <li><a href="{{ url_for('spectrum', spectrum_id=spectrum_id) }}">
+    <li>
+        <a href="{{ url_for('spectrum', spectrum_id=spectrum_id) }}">
         {{ spectrum_id }}
-    </a></li>
+        <div id="viz{{ spectrum_id }}"></div>
+        <script>
+var vlspec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
+    "data": {
+        "url": "{{ url_for('spectrum_json', spectrum_id=spectrum_id) }}"
+    },
+    "mark": "rule",
+    "encoding": {
+        "x": {"field": "mz", "type": "quantitative"},
+        "y": {"field": "intensity", "type": "quantitative"}
+    }
+};
+vegaEmbed("#viz{{ spectrum_id }}", vlspec);
+        </script>
+        </a>
+    </li>
     {% endfor %}
 </ol>
 {% endblock %}

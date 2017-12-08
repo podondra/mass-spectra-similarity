@@ -1,7 +1,7 @@
 import os
 import io
 from . import app
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, jsonify
 from flask_pymongo import PyMongo
 # from werkzeug.utils import secure_filename
 from .similarity import detect_similar
@@ -23,6 +23,7 @@ def allowed_file(filename, extension):
 
 # TODO allow to choose which ionts to compare b, y, a and all combination
 # TODO allow to choose which charge to compare 1, 2, 3
+# TODO allow to choose number of returned similarities, the k parameter
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -71,6 +72,14 @@ def results(result_id=None):
 def spectrum(spectrum_id):
     spectrum = mongo.db.spectra.find_one({'_id': spectrum_id})
     return render_template('spectrum.html', spectrum=spectrum)
+
+
+@app.route('/spectrum/<ObjectId:spectrum_id>.json')
+def spectrum_json(spectrum_id):
+    spectrum = mongo.db.spectra.find_one({'_id': spectrum_id})
+    mz_intensity = [{'mz': mz, 'intensity': i}
+                    for mz, i in zip(spectrum['mz'], spectrum['intensity'])]
+    return jsonify(mz_intensity)
 
 
 @app.route('/db/')
