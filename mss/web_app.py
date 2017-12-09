@@ -70,8 +70,8 @@ def results(result_id=None):
 
 @app.route('/spectrum/<ObjectId:spectrum_id>')
 def spectrum(spectrum_id):
-    spectrum = mongo.db.spectra.find_one({'_id': spectrum_id})
-    return render_template('spectrum.html', spectrum=spectrum)
+    # spectrum = mongo.db.spectra.find_one({'_id': spectrum_id})
+    return render_template('spectrum.html', spectrum_id=spectrum_id)
 
 
 @app.route('/spectrum/<ObjectId:spectrum_id>.json')
