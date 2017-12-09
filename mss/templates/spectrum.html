@@ -12,5 +12,40 @@
 {% endblock %}
 {% block content %}
 <h1>spectrum {{ spectrum_id }}</h1>
-{% include 'spectrum_plot.html' %}
+<div id="viz{{ spectrum_id }}"></div>
+<script>
+var vlspec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
+    "data": {
+        "url": "{{ url_for('spectrum_json', spectrum_id=spectrum_id) }}"
+    },
+    "mark": "rule",
+    "encoding": {
+        "x": {"field": "mz", "type": "quantitative"},
+        "y": {"field": "intensity", "type": "quantitative"}
+    }
+};
+vegaEmbed("#viz{{ spectrum_id }}", vlspec);
+</script>
+<ol>
+    {% for index, peptide in similar %}
+    <li>{{ peptide }}
+        <div id="viz{{ index }}"></div>
+        <script>
+        var vlspec = {
+            "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
+            "data": {
+                "url": "{{ url_for('database_json', index=index) }}"
+            },
+            "mark": "rule",
+            "encoding": {
+                "x": {"field": "mz", "type": "quantitative"},
+                "y": {"field": "intensity", "type": "quantitative"}
+            }
+        };
+        vegaEmbed("#viz{{ index }}", vlspec);
+        </script>
+    </li>
+    {% endfor %}
+</ol>
 {% endblock %}
