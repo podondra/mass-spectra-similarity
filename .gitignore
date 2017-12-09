@@ -1,6 +1,9 @@
 data/
 refs/
 experiments.ipynb
+report.pdf
+report.aux
+report.log
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
