@@ -9,4 +9,5 @@ pdf: $(TARGET).tex $(TARGET).bib
 	pdflatex $(TARGET)
 
 clean:
-	$(RM) $(TARGET).pdf $(TARGET).aux $(TARGET).log
+	$(RM) $(TARGET).pdf $(TARGET).aux $(TARGET).log $(TARGET).bbl \
+	    $(TARGET).blg

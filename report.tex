@@ -1,6 +1,6 @@
 \documentclass[a4paper,10pt,twocolumn]{article}
 \usepackage{lmodern}
-\usepackage[czech]{babel}
+\usepackage[english]{babel}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
@@ -25,7 +25,7 @@ mass spectra.
 
 \subsection{Input}
 
-Applicaiton input is mass spectrum and database of protein
+Applicaiton inputs are mass spectra and database of protein
 sequences.
 
 \subsection{Ouput}
@@ -35,33 +35,84 @@ spectra sorted according to similarity.
 
 \section{Solution Method}
 
-Used methods and algorithms.
+To measure similarity, feature vectors from fearute space \(\mathbb{U}\)
+and similarity measure \(\delta: \mathbb{U} \times \mathbb{U} \to \mathbb{R}\)
+are needed.
 
-Similarity function \(\delta: \mathbb{U} \times \mathbb{U} \to \mathbb{R}\).
+Each mass spectrum is set of a peptide fragments intensities. In order to create
+feature vector, easy feature extraction method is applied. Mass spectrum
+intensities are binned to equal-width bins.
 
-Cosine similarity computes the L2-normalized dot product of vectors. That is,
-if \(x\) and \(y\) are vectors, their cosine similarity \(\text{SIM}_{\cos}\)
-is defined as:
+Protein sequences are splitted into peptides according to rule that the
+sequence is splitted after occurence of amino acid 'K' or 'R' if it is not
+followed by amino acid 'P'. Modified peptides from splitted peptides are
+ignored and that mass spectrum for them is calcutated based on b-ionts with
+charge 1. Intesities corresponding to obtained mass spectra are set to 1.
+For more information please refer to~\cite{novak2009}.
+
+Cosine similarity is chosen as similarity function. It computes the
+L2-normalized dot product of vectors. That is, if \(x\) and \(y\) are vectors,
+their cosine similarity \(\text{SIM}_{\cos}\) is defined as:
 
 \[ \text{SIM}_{\cos}(x, y) = \frac{x^Ty}{\|x\|\|y\|} \]
 
-Magnitude is not important.
-
 \section{Implementation}
 
-Description of used programming tools. Programming language, application
-architecture, used libraries.
+The application is divided into 4 modules:
 
-Python~3.6, scikit-learn~\cite{scikit-learn}, numpy, SciPy~\cite{scipy}, Flask,
-pyteomics~\cite{Goloborodko2013}.
+\begin{itemize}
+    \item mass spectra database operations,
+    \item mass spectra preprocessing
+    \item similarity measure,
+    \item web application.
+\end{itemize}
+
+Programming language used is Python~3.6. From libraries the application requires
+scikit-learn~0.19.1~\cite{scikit-learn}, NumPy~1.13.3,
+SciPy~1.0.0~\cite{scipy}, Flask~0.12.2 and
+pyteomics~3.4.2~\cite{Goloborodko2013}. Web application database is MongoDB.
+
+\subsection{Database Module}
+
+The LIL (list of lists) sparse matrix stores one list per row with entries
+containing the colun index and the value. It is good format for incremental
+construction.
+
+\subsection{Similarity Module}
+
+The similarity measure module contains the \(k\) nearest neighbour query 
+(\(k\)NN). The query return matrix of indexes to database of size
+\(n \times k\) where \(n\) is the number of mass spectra queried.
+Row \(i\) contains indexes to most similar spectra in database in
+descending order.
+
+Cosine similarity is computed using function \texttt{cosine\_similarity}
+from scikit-learn library. Its inputs are two LIL sparse matrices and output
+is CSR sparse matrix. Sparse matrices are used because the feature vector
+contains a lot of zero value and are difficult to srote in memory.
+
+\subsection{Preprocessing Module}
+
+\subsection{Web Application}
 
 \section{Output Example}
+
+Figure~\ref{fig:sample} shows an example result page for a spectrum with 
+one similar spectrum found.
+
+\begin{figure}[H]
+    \begin{center}
+        \includegraphics[width=6cm]{img/output-sample}
+    \end{center}
+    \caption{Flask application result page example.}
+    \label{fig:sample}
+\end{figure}
 
 \section{Experiments}
 
 For kNN query the results are following. Write about the data used.
 
-\begin{table}[h]
+\begin{table}[H]
     \begin{center}
         \label{table:TODO}
         \begin{tabular}{l|rrr}
@@ -83,7 +134,16 @@ For kNN query the results are following. Write about the data used.
 
 \section{Discussion}
 
+Discuss problems of this project. For example y-ionts and a-ionts.
+Range query, which will not improve accuracy.
+
 \section{Conclusion}
+
+This project goal was to implement application for similarity search in
+database of protein sequences for peptides according to its mass spectrum.
+Experiments section presents unsatisfactory results but generally the problem
+of searching for similar peptides from mass spectra is hard due to nosie and
+imperfection during mass spectra retrieval.
 
 \bibliography{report}{}
 \bibliographystyle{plain}
