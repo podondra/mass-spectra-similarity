@@ -70,9 +70,20 @@ The application is divided into 4 modules:
 Programming language used is Python~3.6. From libraries the application requires
 scikit-learn~0.19.1~\cite{scikit-learn}, NumPy~1.13.3,
 SciPy~1.0.0~\cite{scipy}, Flask~0.12.2 and
-pyteomics~3.4.2~\cite{Goloborodko2013}. Web application database is MongoDB.
+pyteomics~3.4.2~\cite{Goloborodko2013}. Web application database is MongoDB 
+and visualization are created be Vega-Lite library.
 
 \subsection{Database Module}
+
+The database module contains functions for working with database of
+proteins sequeces. The main two function are for database generation and
+database load.
+
+Database is generated from FASTA file format and stored as NumPy's NpzFile.
+The NpzFile contains 3 NumPy matrices. First is the array of peptides.
+Second is the array of \(\frac{m}{z}\) values. Last is the matrix of binned
+mass spectra in which each row is a binned mass spectrum. This last
+matrix is in LIL format.
 
 The LIL (list of lists) sparse matrix stores one list per row with entries
 containing the colun index and the value. It is good format for incremental
@@ -93,7 +104,33 @@ contains a lot of zero value and are difficult to srote in memory.
 
 \subsection{Preprocessing Module}
 
+The spectra preprocessing module contains function for mass spectra
+handling and generation.
+
+Function \texttt{read\_mgf} uses
+\texttt{pyteomics.mgf.read} to parse MGF format file because that it the
+only format this application supports.
+
+\texttt{compute\_mass\_spectrum} function serves to
+compute mass given a peptide sequence.
+Database generation procedure calls this function mainly.
+It calls \texttt{pyteomics.mass.calculate\_mass} which return the intensity.
+
+Last interesting function is the feature extraction method implemented as
+\texttt{bin\_spectrum} function which calls
+\texttt{scipy.stats.binned\_statistic} to bin a spectrum.
+
 \subsection{Web Application}
+
+The web application is built on Flask framework. There is 5 different
+views.
+
+Usual workflow is to upload MGF file on the index page with
+selected \(k\). The user is them redirected to result view where it is
+possible to go to each spectrum for the MGF file and see which similarities
+were found.
+
+Moreover, views with database statistics and past resutls are provided. 
 
 \section{Output Example}
 
@@ -132,17 +169,20 @@ For kNN query the results are following. Write about the data used.
     \end{center}
 \end{table}
 
+Experiments with times.
+
 \section{Discussion}
 
 Discuss problems of this project. For example y-ionts and a-ionts.
-Range query, which will not improve accuracy.
+Range query, which will not improve accuracy. Take into account peptide
+modification which are ignored now.
 
 \section{Conclusion}
 
-This project goal was to implement application for similarity search in
+This project's goal was to implement application for similarity search in
 database of protein sequences for peptides according to its mass spectrum.
 Experiments section presents unsatisfactory results but generally the problem
-of searching for similar peptides from mass spectra is hard due to nosie and
+of searching for similar peptides from mass spectra is hard due to noise and
 imperfection during mass spectra retrieval.
 
 \bibliography{report}{}
