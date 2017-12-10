@@ -1,10 +1,11 @@
 import numpy
 from sklearn.metrics.pairwise import cosine_similarity
 from .spectra import bin_spectrum
+from scipy.sparse import lil_matrix
 
 
-def bin_spectra(spectra, bins):
-    mz_matrix = numpy.zeros((len(spectra), bins))
+def bin_spectra(spectra, bins=3871):
+    mz_matrix = lil_matrix((len(spectra), bins))
     for i, spectrum in enumerate(spectra):
         mz = spectrum['m/z array']
         intensities = spectrum['intensity array']
@@ -12,11 +13,10 @@ def bin_spectra(spectra, bins):
     return mz_matrix
 
 
-# TODO experiment with bin sizes 0.1, 0.5, 1
-def detect_similar(spectra, database, k=5, bins=13000):
-    mz_matrix = bin_spectra(spectra, bins)
-    # compute similarity matrix
-    similarities = cosine_similarity(mz_matrix, database)
-    # choose top 5 for each spectrum
-    index = numpy.flip(numpy.argsort(similarities)[:, -k:], axis=-1)
-    return index
+def knn_query(spectra_mat, db_mat, k):
+    n_spectra = spectra_mat.shape[0]
+    similarities = cosine_similarity(spectra_mat, db_mat, dense_output=False)
+    result = numpy.zeros((n_spectra, k), dtype=numpy.int32)
+    for i in range(n_spectra):
+        result[i, :] = numpy.argsort(similarities.getrow(i).toarray()[0])[-k:]
+    return result

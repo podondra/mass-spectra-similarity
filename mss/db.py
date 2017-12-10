@@ -1,6 +1,7 @@
 import numpy
 from pyteomics import fasta
 from .spectra import bin_spectrum, compute_mass_spectrum
+from scipy.sparse import lil_matrix
 
 
 ALLOWED_AMINO_ACIDS = 'ARNDCFQEGHILKMPSTWYV'
@@ -16,6 +17,7 @@ def generate_peptides(protein):
             peptide = ''
             continue
         peptide += amino_acid
+        # do not core about these where can be K or R in the middle
         if (protein[i] == 'K' or protein[i] == 'R') and protein[i + 1] != 'P':
             if len(peptide) > 0:
                 peptides.add(peptide)
@@ -23,10 +25,7 @@ def generate_peptides(protein):
     return peptides
 
 
-# TODO add view for db generation
-# TODO save db to mongodb
-# TODO represent as vector model see ref/lecture03.pdf
-def generate_db(fasta_file, bins=13000):
+def generate_db(fasta_file, bins):
     peptides = set()
     with fasta.read(fasta_file) as db:
         for _, protein in db:
@@ -36,8 +35,7 @@ def generate_db(fasta_file, bins=13000):
     for peptide in peptides:
         mzs.append(compute_mass_spectrum(peptide))
 
-    # TODO dtype
-    intensity_matrix = numpy.zeros((len(peptides), bins))
+    intensity_matrix = lil_matrix((len(mzs), bins), dtype=numpy.int8)
     for i, intensity in enumerate(mzs):
         intensity_matrix[i, :] = bin_spectrum(mzs[i], bins=bins)
 
@@ -47,7 +45,6 @@ def generate_db(fasta_file, bins=13000):
 
 
 def get_db(db_file):
-    # TODO load it from mongodb
     npz = numpy.load(db_file)
     # first array is peptides, second is mz values, third is binned intensities
-    return npz['peptides'], npz['mzs'], npz['intensity_matrix']
+    return npz['peptides'], npz['mzs'], npz['intensity_matrix'].tolist()

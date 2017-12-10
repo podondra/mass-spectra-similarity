@@ -7,15 +7,18 @@
     <p>
         <input type="file" name="file">
         <select name="iont" multiple>
-            {% for iont in 'bya' %}
+            <!-- TODO add y and a ionts -->
+            {% for iont in 'b' %}
             <option value="{{ iont }}">{{ iont }}</option>
             {% endfor %}
         </select>
         <select name="charge" multiple>
-            {% for charge in range(1, 4) %}
+            <!-- TODO add charges 2 and 3 -->
+            {% for charge in [1] %}
             <option value="{{ charge }}">{{ charge }}</option>
             {% endfor %}
         </select>
+        k: <input type="number" name="k" min="1">
         <input type="submit" value="upload">
     </p>
 </form>

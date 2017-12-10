@@ -4,7 +4,7 @@ from . import app
 from flask import render_template, request, redirect, url_for, jsonify
 from flask_pymongo import PyMongo
 # from werkzeug.utils import secure_filename
-from .similarity import detect_similar
+from .similarity import knn_query, bin_spectra
 from .spectra import read_mgf
 from .db import get_db
 
@@ -16,7 +16,7 @@ app.config['MONGO_URI'] = 'mongodb://localhost:27017/mss'
 
 mongo = PyMongo(app)
 # TODO document
-PEPTIDES, MZS, DATABASE = get_db('data/db.npz')
+PEPTIDES, MZS, INTENSITY_MATRIX = get_db('data/db.npz')
 
 
 def allowed_file(filename, extension):
@@ -24,9 +24,6 @@ def allowed_file(filename, extension):
            filename.rsplit('.', 1)[1].lower() == extension
 
 
-# TODO allow to choose which ionts to compare b, y, a and all combination
-# TODO allow to choose which charge to compare 1, 2, 3
-# TODO allow to choose number of returned similarities, the k parameter
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -43,11 +40,15 @@ def index():
             # convert bytes file to string file
             stringio = io.StringIO(file.read().decode('utf-8'))
             spectra = read_mgf(stringio)
-            indexes = detect_similar(spectra, DATABASE, k=2)
+
+            mz_matrix = bin_spectra(spectra, bins=3871)
+            k = int(request.form['k'])
+            indexes = knn_query(mz_matrix, INTENSITY_MATRIX, k)
+
             spectra_list = [{
                 'mz': spectrum['m/z array'].tolist(),
                 'intensity': spectrum['intensity array'].tolist(),
-                'indexes': index.tolist(),
+                'indexes': list(reversed(index.tolist())),
                 } for spectrum, index in zip(spectra, indexes)]
             spectra_col = mongo.db.spectra
             spectra_ids = spectra_col.insert_many(spectra_list).inserted_ids
@@ -88,7 +89,7 @@ def spectrum_json(spectrum_id):
 
 @app.route('/db/')
 def db():
-    n_spectra, bins = DATABASE.shape
+    n_spectra, bins = INTENSITY_MATRIX.shape
     return render_template('db.html', n_spectra=n_spectra, bins=bins)
 
 

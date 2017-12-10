@@ -22,8 +22,9 @@ def compute_mass_spectrum(sequence, charge=1):
     return spectrum
 
 
-# TODO compute mz range from spectra given as test data
-def bin_spectrum(mz, intensity=None, bins=13000, mz_range=(0, 1300)):
+# mz_range is given from statistic by test data opal_annotated.mgf
+#   and amethyst_annotated.mgf
+def bin_spectrum(mz, intensity=None, bins=3871, mz_range=(150, 4021)):
     intensity = intensity if intensity is not None else numpy.ones_like(mz)
     binned, _, _ = binned_statistic(mz, intensity, 'sum', bins, mz_range)
     return binned
