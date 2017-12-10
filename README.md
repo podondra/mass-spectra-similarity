@@ -34,13 +34,18 @@ To install the application in *editable* mode:
 
 To start the app:
 
-`$ export FLASK_APP=mss`
-`$ flask run`
+```
+$ export FLASK_APP=mss
+$ export DATABASE=/path/to/generated/peptide/database/
+$ flask run
+```
 
 Debug mode:
 
-`$ export FLASK_DEBUG=1`
-`$ flask run`
+```
+$ export FLASK_DEBUG=1
+$ flask run
+```
 
 ## MongoDB
 

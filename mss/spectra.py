@@ -9,7 +9,6 @@ def read_mgf(mgf_file):
     return spectra
 
 
-# TODO add y and a ionts
 def b_ionts(sequence):
     return [sequence[:i] for i in range(1, len(sequence))]
 

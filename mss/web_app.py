@@ -3,10 +3,9 @@ import io
 from . import app
 from flask import render_template, request, redirect, url_for, jsonify
 from flask_pymongo import PyMongo
-# from werkzeug.utils import secure_filename
 from .similarity import knn_query, bin_spectra
 from .spectra import read_mgf
-from .db import get_db
+from .db import load_db
 
 
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -15,8 +14,9 @@ app.config['MONGO_URI'] = 'mongodb://localhost:27017/mss'
 
 
 mongo = PyMongo(app)
-# TODO document
-PEPTIDES, MZS, INTENSITY_MATRIX = get_db('data/db.npz')
+PEPTIDES, MZS, INTENSITY_MATRIX = load_db(
+        os.environ.get('DATABASE', 'data/db.npz')
+        )
 
 
 def allowed_file(filename, extension):
