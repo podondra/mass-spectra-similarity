@@ -5,7 +5,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
 \usepackage{float}
-\usepackage[top=0.5cm,bottom=2cm,left=1cm,right=1cm]{geometry}
+\usepackage[top=1cm,bottom=2cm,left=1cm,right=1cm]{geometry}
 \usepackage{amsmath}
 \usepackage{amssymb}
 
@@ -25,17 +25,17 @@ mass spectra.
 
 \subsection{Input}
 
-Applicaiton inputs are mass spectra and database of protein
+Application inputs are mass spectra and database of protein
 sequences.
 
-\subsection{Ouput}
+\subsection{Output}
 
 Output it set of peptide sequences similar to input mass
 spectra sorted according to similarity.
 
 \section{Solution Method}
 
-To measure similarity, feature vectors from fearute space \(\mathbb{U}\)
+To measure similarity, feature vectors from feature space \(\mathbb{U}\)
 and similarity measure \(\delta: \mathbb{U} \times \mathbb{U} \to \mathbb{R}\)
 are needed.
 
@@ -43,11 +43,11 @@ Each mass spectrum is set of a peptide fragments intensities. In order to create
 feature vector, easy feature extraction method is applied. Mass spectrum
 intensities are binned to equal-width bins.
 
-Protein sequences are splitted into peptides according to rule that the
-sequence is splitted after occurence of amino acid 'K' or 'R' if it is not
-followed by amino acid 'P'. Modified peptides from splitted peptides are
-ignored and that mass spectrum for them is calcutated based on b-ionts with
-charge 1. Intesities corresponding to obtained mass spectra are set to 1.
+Protein sequences are split into peptides according to rule that the
+sequence is split after occurrence of amino acid 'K' or 'R' if it is not
+followed by amino acid 'P'. Modified peptides from split peptides are
+ignored and that mass spectrum for them is calculated based on b-ions with
+charge 1. Intensities corresponding to obtained mass spectra are set to 1.
 For more information please refer to~\cite{novak2009}.
 
 Cosine similarity is chosen as similarity function. It computes the
@@ -76,7 +76,7 @@ and visualization are created be Vega-Lite library.
 \subsection{Database Module}
 
 The database module contains functions for working with database of
-proteins sequeces. The main two function are for database generation and
+proteins sequences. The main two function are for database generation and
 database load.
 
 Database is generated from FASTA file format and stored as NumPy's NpzFile.
@@ -86,12 +86,12 @@ mass spectra in which each row is a binned mass spectrum. This last
 matrix is in LIL format.
 
 The LIL (list of lists) sparse matrix stores one list per row with entries
-containing the colun index and the value. It is good format for incremental
+containing the column index and the value. It is good format for incremental
 construction.
 
 \subsection{Similarity Module}
 
-The similarity measure module contains the \(k\) nearest neighbour query 
+The similarity measure module contains the \(k\) nearest neighbor query 
 (\(k\)NN). The query return matrix of indexes to database of size
 \(n \times k\) where \(n\) is the number of mass spectra queried.
 Row \(i\) contains indexes to most similar spectra in database in
@@ -100,7 +100,7 @@ descending order.
 Cosine similarity is computed using function \texttt{cosine\_similarity}
 from scikit-learn library. Its inputs are two LIL sparse matrices and output
 is CSR sparse matrix. Sparse matrices are used because the feature vector
-contains a lot of zero value and are difficult to srote in memory.
+contains a lot of zero value and are difficult to store in memory.
 
 \subsection{Preprocessing Module}
 
@@ -130,7 +130,7 @@ selected \(k\). The user is them redirected to result view where it is
 possible to go to each spectrum for the MGF file and see which similarities
 were found.
 
-Moreover, views with database statistics and past resutls are provided. 
+Moreover, views with database statistics and past results are provided. 
 
 \section{Output Example}
 
@@ -147,35 +147,59 @@ one similar spectrum found.
 
 \section{Experiments}
 
-For kNN query the results are following. Write about the data used.
+This section presents some experiments with speed and accuracy of
+implemented application.
+
+Table \ref{table:experiments} show statistics of \(k\)NN query.
+Testing data are a protein database of 218513 peptide sequences and a MGF file
+with 1569 labeled mass spectra. Result for 3 different bin sizes are presented.
+Accuracy if the spectrum was between top 1, 5 or 10 found peptides sequences.
+CPU times for the different times are also shown.
 
 \begin{table}[H]
     \begin{center}
-        \label{table:TODO}
+        \label{table:experiments}
         \begin{tabular}{l|rrr}
             & \multicolumn{3}{c}{\textbf{bin size}} \\
             \textbf{accuracy measure} & 0.1 & 0.5 & 1 \\
             \hline
-            top 1 & 6.12 & 6.37 & 6.50 \\
-            top 5 & 7.46 & 8.09 & 8.22 \\
-            top 10 & 8.29 & 8.80 & 8.86 \\
+            top 1 (\%) & 6.12 & 6.37 & 6.50 \\
+            top 5 (\%) & 7.46 & 8.09 & 8.22 \\
+            top 10 (\%) & 8.29 & 8.80 & 8.86 \\
+            CPU time (s) & 0 & 0 & 1.15 \\
         \end{tabular}
         \caption{
             Accuracy of similarity search in percents for different bin sizes.
             Top 10 accuracy measures if the searched peptide sequence is between
             the first 10 returned results. Accordingly are defined the top 5
-            and top 1 accuracies.
+            and top 1 accuracy. The last row show CPU time needed to compute
+            the cosine similarity.
         }
     \end{center}
 \end{table}
 
-Experiments with times.
+Results show the problem addressed in this project is hard. Accuracy of 8.29\%
+for the target peptide to appear in top 10 found peptides is bad and there
+should deployed some preprocessing procedures to improve the result.
+Some approaches are also suggested in the next section.
+
+From time perspective the database generation takes approximately 9 and half
+minutes.
 
 \section{Discussion}
 
-Discuss problems of this project. For example y-ionts and a-ionts.
-Range query, which will not improve accuracy. Take into account peptide
-modification which are ignored now.
+This project tries to solve hard problem of similarity search in mass spectra.
+Cosine similarity method was implemented and tested for 3 different bin sizes.
+The result are not satisfactory but prove that this concept works.
+
+To further improve the accuracy there is a lot of extension that can be added to
+this application. For example y-ions and a-ions might be added to database
+and user might be offered the choose to compare to these spectra. Also the mass
+spectra can be computed for different charges. Lastly peptide modifications are
+not taken into account.
+
+From application perspective range query could be implemented but it will not
+improve search accuracy.
 
 \section{Conclusion}
 
