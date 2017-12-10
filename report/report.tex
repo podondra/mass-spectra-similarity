@@ -166,7 +166,7 @@ CPU times for the different times are also shown.
             top 1 (\%) & 6.12 & 6.37 & 6.50 \\
             top 5 (\%) & 7.46 & 8.09 & 8.22 \\
             top 10 (\%) & 8.29 & 8.80 & 8.86 \\
-            CPU time (s) & 0 & 0 & 1.15 \\
+            CPU time (s) & 20.1 & 24.7 & 24.0 \\
         \end{tabular}
         \caption{
             Accuracy of similarity search in percents for different bin sizes.
@@ -184,13 +184,15 @@ should deployed some preprocessing procedures to improve the result.
 Some approaches are also suggested in the next section.
 
 From time perspective the database generation takes approximately 9 and half
-minutes.
+minutes. But the database is generated once and then use so it is no concern.
+Then, each query takes approximately 20.1--24.7 seconds. Because this application
+is not based on fast user interation it is also fine.
 
 \section{Discussion}
 
 This project tries to solve hard problem of similarity search in mass spectra.
 Cosine similarity method was implemented and tested for 3 different bin sizes.
-The result are not satisfactory but prove that this concept works.
+The results are not satisfactory but prove that this concept works.
 
 To further improve the accuracy there is a lot of extension that can be added to
 this application. For example y-ions and a-ions might be added to database
