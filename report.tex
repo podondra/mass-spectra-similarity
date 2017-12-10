@@ -6,6 +6,8 @@
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage[top=0.5cm,bottom=2cm,left=1cm,right=1cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
 
 \title{Similarity of Mass Spectra}
 \date{\today}
@@ -33,17 +35,57 @@ spectra sorted according to similarity.
 
 \section{Solution Method}
 
+Used methods and algorithms.
+
+Similarity function \(\delta: \mathbb{U} \times \mathbb{U} \to \mathbb{R}\).
+
+Cosine similarity computes the L2-normalized dot product of vectors. That is,
+if \(x\) and \(y\) are vectors, their cosine similarity \(\text{SIM}_{\cos}\)
+is defined as:
+
+\[ \text{SIM}_{\cos}(x, y) = \frac{x^Ty}{\|x\|\|y\|} \]
+
+Magnitude is not important.
+
 \section{Implementation}
+
+Description of used programming tools. Programming language, application
+architecture, used libraries.
+
+Python~3.6, scikit-learn~\cite{scikit-learn}, numpy, SciPy~\cite{scipy}, Flask,
+pyteomics~\cite{Goloborodko2013}.
 
 \section{Output Example}
 
 \section{Experiments}
 
+For kNN query the results are following. Write about the data used.
+
+\begin{table}[h]
+    \begin{center}
+        \label{table:TODO}
+        \begin{tabular}{l|rrr}
+            & \multicolumn{3}{c}{\textbf{bin size}} \\
+            \textbf{accuracy measure} & 0.1 & 0.5 & 1 \\
+            \hline
+            top 1 & 6.12 & 6.37 & 6.50 \\
+            top 5 & 7.46 & 8.09 & 8.22 \\
+            top 10 & 8.29 & 8.80 & 8.86 \\
+        \end{tabular}
+        \caption{
+            Accuracy of similarity search in percents for different bin sizes.
+            Top 10 accuracy measures if the searched peptide sequence is between
+            the first 10 returned results. Accordingly are defined the top 5
+            and top 1 accuracies.
+        }
+    \end{center}
+\end{table}
+
 \section{Discussion}
 
 \section{Conclusion}
 
-\bibliographystyle{unsrt}
-\bibliography{roz}
+\bibliography{report}{}
+\bibliographystyle{plain}
 
 \end{document}

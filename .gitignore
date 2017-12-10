@@ -4,6 +4,8 @@ experiments.ipynb
 report.pdf
 report.aux
 report.log
+report.bbl
+report.blg
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

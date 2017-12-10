@@ -2,9 +2,11 @@ TARGET = report
 
 all: pdf
 
-pdf: $(TARGET).tex
-	pdfcslatex $(TARGET)
-	pdfcslatex $(TARGET)
+pdf: $(TARGET).tex $(TARGET).bib
+	pdflatex $(TARGET)
+	bibtex $(TARGET)
+	pdflatex $(TARGET)
+	pdflatex $(TARGET)
 
 clean:
 	$(RM) $(TARGET).pdf $(TARGET).aux $(TARGET).log
