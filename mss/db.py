@@ -44,7 +44,12 @@ def generate_db(fasta_file, bins):
     return peptides_vector, mzs_vector, intensity_matrix
 
 
-def get_db(db_file):
+def save_db(filename, peptides_vector, mzs_vector, intensity_matrix):
+    numpy.savez(filename, peptides=peptides_vector, mzs=mzs_vector,
+                intensity_matrix=intensity_matrix)
+
+
+def load_db(db_file):
     npz = numpy.load(db_file)
     # first array is peptides, second is mz values, third is binned intensities
     return npz['peptides'], npz['mzs'], npz['intensity_matrix'].tolist()

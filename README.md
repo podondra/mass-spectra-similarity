@@ -35,6 +35,7 @@ To install the application in *editable* mode:
 To start the app:
 
 `$ export FLASK_APP=mss`
+`$ export DATABASE=/path/to/generated/peptide/database/`
 `$ flask run`
 
 Debug mode:

@@ -5,19 +5,7 @@
 <p class="important">mass spectra similarity</p>
 <form method="post" enctype="multipart/form-data">
     <p>
-        <input type="file" name="file">
-        <select name="iont" multiple>
-            <!-- TODO add y and a ionts -->
-            {% for iont in 'b' %}
-            <option value="{{ iont }}">{{ iont }}</option>
-            {% endfor %}
-        </select>
-        <select name="charge" multiple>
-            <!-- TODO add charges 2 and 3 -->
-            {% for charge in [1] %}
-            <option value="{{ charge }}">{{ charge }}</option>
-            {% endfor %}
-        </select>
+        mgf file: <input type="file" name="file">
         k: <input type="number" name="k" min="1">
         <input type="submit" value="upload">
     </p>
